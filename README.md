@@ -1,4 +1,4 @@
-# 1D, 2D, and 3D Sinusoidal Postional Encoding (Pytorch and Tensorflow)
+# 1D, 2D, and 3D Sinusoidal Postional Encoding (Pytorch )
 
 ![Code Coverage](./svgs/cov.svg)
 [![PyPI version](https://badge.fury.io/py/positional-encodings.svg)](https://badge.fury.io/py/positional-encodings)
@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 This is a practical, easy to download implemenation of 1D, 2D, and 3D
-sinusodial positional encodings for PyTorch and Tensorflow.
+sinusodial positional encodings for PyTorch .
 
 It is able to encode on tensors of the form `(batchsize, x, ch)`, `(batchsize,
 x, y, ch)`, and `(batchsize, x, y, z, ch)`, where the positional encodings will
@@ -67,25 +67,6 @@ from positional_encodings import PositionalEncodingPermute3D
 p_enc_3d = PositionalEncodingPermute3D(11)
 z = torch.zeros((1,11,5,6,4))
 print(p_enc_3d(z).shape) # (1, 11, 5, 6, 4)
-```
-
-### Tensorflow Keras
-
-This also supports Tensorflow. Simply prepend all class names with `TF`.
-
-```python3
-import tensorflow as tf
-from positional_encodings import TFPositionalEncoding2D
-
-# Returns the position encoding only
-p_enc_2d = TFPositionalEncoding2D(170)
-y = tf.zeros((1,8,6,2))
-print(p_enc_2d(y).shape) # (1, 8, 6, 2)
-
-# Return the inputs with the position encoding added
-add_p_enc_2d = TFSummer(TFPositionalEncoding2D(170))
-y = tf.ones((1,8,6,2))
-print(add_p_enc_2d(y) - p_enc_2d(y)) # tf.ones((1,8,6,2))
 ```
 
 ## Formulas

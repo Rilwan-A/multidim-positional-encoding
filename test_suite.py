@@ -1,13 +1,9 @@
 import time
 
 import numpy as np
-import tensorflow as tf
 import torch
 
 from positional_encodings import *
-
-tf.config.experimental_run_functions_eagerly(True)
-
 
 def test_torch_1d_correct_shape():
     p_enc_1d = PositionalEncoding1D(10)
@@ -39,63 +35,6 @@ def test_torch_3d_correct_shape():
     assert p_enc_3d(z).shape == (7, 11, 5, 6, 4)
 
 
-def test_tf_1d_correct_shape():
-    p_enc_1d = TFPositionalEncoding1D(170)
-    x = tf.zeros((1, 1024, 170))
-    assert p_enc_1d(x).shape == (1, 1024, 170)
-
-
-def test_tf_2d_correct_shape():
-    p_enc_2d = TFPositionalEncoding2D(170)
-    y = tf.zeros((1, 1, 1024, 170))
-    assert p_enc_2d(y).shape == (1, 1, 1024, 170)
-
-
-def test_tf_3d_correct_shape():
-    p_enc_3d = TFPositionalEncoding3D(170)
-    z = tf.zeros((1, 4, 1, 1024, 170))
-    assert p_enc_3d(z).shape == (1, 4, 1, 1024, 170)
-
-
-def test_torch_tf_1d_same():
-    tf_enc_1d = TFPositionalEncoding1D(123)
-    pt_enc_1d = PositionalEncoding1D(123)
-
-    sample = np.random.randn(2, 15, 123)
-
-    tf_out = tf_enc_1d(sample)
-    pt_out = pt_enc_1d(torch.tensor(sample))
-
-    # There is some rounding discrepancy
-    assert np.sum(np.abs(tf_out.numpy() - pt_out.numpy()) > 0.0001) == 0
-
-
-def test_torch_tf_2d_same():
-    tf_enc_2d = TFPositionalEncoding2D(123)
-    pt_enc_2d = PositionalEncoding2D(123)
-
-    sample = np.random.randn(2, 123, 321, 170)
-
-    tf_out = tf_enc_2d(sample)
-    pt_out = pt_enc_2d(torch.tensor(sample))
-
-    # There is some rounding discrepancy
-    assert np.sum(np.abs(tf_out.numpy() - pt_out.numpy()) > 0.0001) == 0
-
-
-def test_torch_tf_3d_same():
-    tf_enc_3d = TFPositionalEncoding3D(123)
-    pt_enc_3d = PositionalEncoding3D(123)
-
-    sample = np.random.randn(2, 123, 24, 21, 10)
-
-    tf_out = tf_enc_3d(sample)
-    pt_out = pt_enc_3d(torch.tensor(sample))
-
-    # There is some rounding discrepancy
-    assert np.sum(np.abs(tf_out.numpy() - pt_out.numpy()) > 0.0001) == 0
-
-
 def test_torch_summer():
     model_with_sum = Summer(PositionalEncoding2D(125))
     model_wo_sum = PositionalEncoding2D(125)
@@ -117,26 +56,3 @@ def test_torch_1D_cache():
 
     assert p_enc_1d(y).shape == (1, 7, 10)
     assert p_enc_1d.cached_penc.shape == (1, 7, 10)
-
-
-def test_tf_1D_cache():
-    p_enc_1d = TFPositionalEncoding1D(170)
-    x = tf.zeros((1, 1024, 170))
-    y = tf.zeros((1, 100, 170))
-
-    assert not p_enc_1d.cached_penc
-    assert p_enc_1d(x).shape == (1, 1024, 170)
-    assert p_enc_1d.cached_penc.shape == (1, 1024, 170)
-
-    assert p_enc_1d(y).shape == (1, 100, 170)
-    assert p_enc_1d.cached_penc.shape == (1, 100, 170)
-
-
-def test_tf_summer():
-    model_with_sum = TFSummer(TFPositionalEncoding2D(125))
-    model_wo_sum = TFPositionalEncoding2D(125)
-    z = np.random.randn(3, 5, 6, 125)
-    assert (
-        np.sum(np.abs((model_wo_sum(z) + z).numpy() - model_with_sum(z).numpy()))
-        < 0.0001
-    ), "The tf summer is not working properly!"

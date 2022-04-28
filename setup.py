@@ -11,7 +11,7 @@ setuptools.setup(
     description="1D, 2D, and 3D Sinusodal Positional Encodings in PyTorch",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/tatp22/multidim-positional-encoding",
+    url="https://github.com/Rilwan-A/multidim-positional-encoding",
     packages=setuptools.find_packages(),
     keywords=["transformers", "attention"],
     classifiers=[
